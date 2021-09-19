@@ -56,8 +56,3 @@ def make_pie_chart(username: str,
     p.axis.visible = False
     p.grid.grid_line_color = None
     return json.dumps(json_item(p))
-
-
-@router.get("/")
-def hello(request: Request):
-    return templates.TemplateResponse("graph.html", {"request": request, "resources": CDN.render()})
