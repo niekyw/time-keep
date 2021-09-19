@@ -1,4 +1,3 @@
-from bokeh.embed import components
 from datetime import datetime
 from typing import Optional
 
@@ -10,6 +9,8 @@ import pandas as pd
 from bokeh.palettes import Accent
 from bokeh.plotting import figure
 from bokeh.transform import cumsum
+from bokeh.embed import json_item
+import json
 
 import database_interactions
 import task_routes
@@ -49,4 +50,4 @@ def make_pie_chart(username: str,
     p.axis.visible = False
     p.grid.grid_line_color = None
 
-    return components(p)
+    return json.dumps(json_item(p))

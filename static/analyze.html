@@ -38,6 +38,12 @@
 
   <input type="button" class="button" value="Create graphs.">
 
+<script>
+const response = await fetch('/plot')
+const item = await response.json()
+Bokeh.embed.embed_item(item)
+</script>
+
 
 </div>
 </body>
