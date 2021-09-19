@@ -23,7 +23,7 @@ var stoptime = true;
 function clockIn() {
   try {
     logTaskStart('user', 'task', 'category') //TODO: fix default values
-  }catch error {
+  }catch (error) {
     alert("Alert could not log starting task, breaking")
   }
   if (stoptime === true) {
@@ -47,7 +47,7 @@ function stopTimer() {
 function resetTimer() {
   try {
     logTaskEnd('user', 'task', 'category') //TODO: fix default values
-  }catch error {
+  }catch (error) {
     alert("Alert could not log starting task, breaking")
   }
     stoptime = true;
