@@ -13,4 +13,9 @@ app.include_router(plots_router)
 
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
-templates = Jinja2Templates(directory="templates")
+
+
+
+@app.route("/hello")
+def hello():
+    return {"message": "Hello World"}

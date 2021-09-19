@@ -26,7 +26,7 @@ def create_databases():
 
 def get_db():
     create_databases()
-    conn = sqlite3.connect(tasks_database)
+    conn = sqlite3.connect(tasks_database, check_same_thread=False)
     try:
         yield conn
     finally:

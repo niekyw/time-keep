@@ -1,15 +1,17 @@
 from datetime import datetime
 from typing import Optional
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, Request
+from fastapi.templating import Jinja2Templates
 from math import pi
 
 import pandas as pd
 
 from bokeh.palettes import Accent, Accent8
 from bokeh.plotting import figure
+from bokeh.resources import CDN
 from bokeh.transform import cumsum
-from bokeh.embed import components, json_item
+from bokeh.embed import json_item
 import json
 
 import database_interactions
@@ -17,6 +19,7 @@ import task_routes
 
 
 router = APIRouter(prefix="/plots")
+templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/{username}", response_model=Optional[str])
@@ -53,3 +56,8 @@ def make_pie_chart(username: str,
     p.axis.visible = False
     p.grid.grid_line_color = None
     return json.dumps(json_item(p))
+
+
+@router.get("/")
+def hello(request: Request):
+    return templates.TemplateResponse("graph.html", {"request": request, "resources": CDN.render()})
