@@ -61,10 +61,10 @@ def start_logging(username: str, task_name: str, category: str = "Miscellaneous"
         """SELECT Task_Name FROM tasks WHERE User = ? AND End_Time IS NULL""",
         (username, )).fetchone() is not None
     if not currently_running:
-        db.cursor().execute(
-            """INSERT INTO tasks VALUES (?, ?, ?, ?, ?)""",
-            (task_name, username, category, start_time, None)
-        )
+        a = db.cursor().execute(
+            """INSERT INTO tasks (Task_Name, User, Category, Start_Time, End_Time) VALUES (?, ?, ?, ?, ?);""",
+             (task_name, username, category, start_time, None))
+        print("Successfully inserted!", a)
     return not currently_running
 
 
@@ -76,7 +76,7 @@ def end_logging(username: str, db=Depends(get_db)) -> bool:
     db: Connection
     # Find the most recently starting event's unique identifying info
     most_recently_started = db.cursor().execute(
-        """SELECT User, Task_Name, Start_Time FROM tasks WHERE User_Name = ? AND End_Time IS NULL""",
+        """SELECT User, Task_Name, Start_Time FROM tasks WHERE User = ? AND End_Time IS NULL""",
         (username, )).fetchone()
     if most_recently_started is None:
         return False

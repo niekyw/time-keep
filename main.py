@@ -11,10 +11,5 @@ app.include_router(category_router)
 
 # Can I push this?
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 templates = Jinja2Templates(directory="templates")

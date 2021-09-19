@@ -37,5 +37,6 @@ def add_category(username: str, category: str, db=Depends(get_db)) -> bool:
         "SELECT Category FROM categories WHERE User = ? AND Category = ?",
         (username, category)).fetchone() is not None
     if not exists:
-        db.cursor().execute("""INSERT INTO categories VALUES (?, ?)""", (username, category))
+        db.cursor().execute("""INSERT INTO categories (User, Category) VALUES (?, ?)""",
+                            (username, category))
     return not exists

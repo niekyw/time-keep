@@ -9,13 +9,14 @@ def create_databases():
     cur = conn.cursor()
 
     cur.execute('''CREATE TABLE IF NOT EXISTS tasks
-    (indx          int(8),
+    (indx           integer primary key,
     User            text,
     Task_Name       text,
     Start_Time      datetime,
     End_Time        datetime,
     Category        text,
-    FOREIGN KEY (Category) REFERENCES categories (Category))''')
+    FOREIGN KEY (Category) REFERENCES categories (Category))
+    ''')
 
     cur.execute('''CREATE TABLE IF NOT EXISTS categories
     (User   text,
