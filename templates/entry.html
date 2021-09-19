@@ -15,8 +15,19 @@
 </div>
 
 <div style="margin-left:80px;">
-  <input type="button" class="button" value="Add Entry">
-  <input type="button" class="button" value="Clock In">
+  <div id="stopwatch">
+      00:00:00
+  </div>
+
+  <ul id="buttons">
+      <li><button id="clock" onclick="clockIn()">Clock In</button></li>
+      <li><button onclick="resetTimer()">Clock Out</button></li>
+
+  </ul>
+  <script src="../static/scripts.js"></script>
+
+
 </div>
 </body>
+
 </html>
