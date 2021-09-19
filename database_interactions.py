@@ -11,7 +11,7 @@ def create_databases():
     cur.execute('''CREATE TABLE IF NOT EXISTS tasks
     (indx          int(8),
     User            text,
-    Notes           text,
+    Task_Name       text,
     Start_Time      datetime,
     End_Time        datetime,
     Category        text,
