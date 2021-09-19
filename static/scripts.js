@@ -1,5 +1,4 @@
-var expanded = false;
-const url = "127.0.0.1:8000";
+let expanded = false;
 
 function showCheckboxes() {
   var checkboxes = document.getElementById("checkboxes");
@@ -15,23 +14,25 @@ function showCheckboxes() {
 
 const timer = document.getElementById('stopwatch');
 
-var hr = 0;
-var min = 0;
-var sec = 0;
-var stoptime = true;
+let hr = 0;
+let min = 0;
+let sec = 0;
+let stoptime = true;
 
 function clockIn() {
   try {
     logTaskStart('user', 'task', 'category') //TODO: fix default values
   }catch (error) {
-    alert("Alert could not log starting task, breaking")
+    console.error("Could not log starting task, breaking");
+    return;
+  }
+  if (!logTaskStart("user", "task", "category")) {
+
   }
   if (stoptime === true) {
         stoptime = false;
         timerCycle();
     }
-
-
 }
 //Does this exist?
 function stopTimer() {
@@ -44,12 +45,10 @@ function stopTimer() {
 
 }
 
-function resetTimer() {
-  try {
-    logTaskEnd('user', 'task', 'category') //TODO: fix default values
-  }catch (error) {
-    alert("Alert could not log starting task, breaking")
-  }
+async function resetTimer() {
+    if (!await logTaskEnd('user', 'task', 'category')) {
+      alert("Alert could not log starting task, breaking");
+    }
     stoptime = true;
     timer.innerHTML = '00:00:00';
     hr = 0;
@@ -58,30 +57,30 @@ function resetTimer() {
 }
 
 function timerCycle() {
-    if (stoptime == false) {
+    if (!stoptime) {
     sec = parseInt(sec);
     min = parseInt(min);
     hr = parseInt(hr);
 
     sec = sec + 1;
 
-    if (sec == 60) {
+    if (sec === 60) {
       min = min + 1;
       sec = 0;
     }
-    if (min == 60) {
+    if (min === 60) {
       hr = hr + 1;
       min = 0;
       sec = 0;
     }
 
-    if (sec < 10 || sec == 0) {
+    if (sec < 10 || sec === 0) {
       sec = '0' + sec;
     }
-    if (min < 10 || min == 0) {
+    if (min < 10 || min === 0) {
       min = '0' + min;
     }
-    if (hr < 10 || hr == 0) {
+    if (hr < 10 || hr === 0) {
       hr = '0' + hr;
     }
 
@@ -111,21 +110,19 @@ function formatParams(params){
  * @return list of user tasks within the specified time range
  * @throws Error if cannot get list of user tasks
  */
-function getUserTasks(user, minTime, maxTime) {
-    const xhttp = new XMLHttpRequest();
+async function getUserTasks(user, minTime, maxTime) {
     const params = {
         "min_time": minTime,
         "max_time": maxTime,
     };
     // TODO: include categories filter?
-    xhttp.open("GET", url + "/tasks/" + user + formatParams(params), false);
-    xhttp.send()
-    xhttp.onreadystatechange = (e) => {
-        if (xhttp.status !== 200) {
-            throw Error("Failed to get user tasks");
-        }
-        return JSON.parse(xhttp.responseType);
+    const response = await fetch(
+        "/tasks/" + user + formatParams(params)
+    );
+    if (response.status !== 200) {
+        throw Error("Failed to get user tasks");
     }
+    return response.json();
 }
 
 
@@ -137,17 +134,20 @@ function getUserTasks(user, minTime, maxTime) {
  * @param category category of the task; str | None
  * @return true if succeeded, false otherwise
  */
-function logTaskStart(user, task, category) {
-    const xhttp = new XMLHttpRequest();
+async function logTaskStart(user, task, category) {
     const params = {
         "task_name": task,
         "category": category,
     };
-    xhttp.open("POST", url + "/tasks/start/" + user + formatParams(params), false);
-    xhttp.send();
-    xhttp.onreadystatechange = (e) => {
-        return xhttp.status === 201;
-    }
+    const response = await fetch(
+        "/tasks/start/" + user + formatParams(params),
+        {
+            method: "POST",
+            body: "",
+        },
+    )
+    return response.status === 201;
+
 }
 
 /**
@@ -156,13 +156,15 @@ function logTaskStart(user, task, category) {
  * @param user username; str
  * @return true if succeeded, false otherwise
  */
-function logTaskEnd(user) {
-    const xhttp = new XMLHttpRequest();
-    xhttp.open("POST", url + "/tasks/end/" + user, false);
-    xhttp.send();
-    xhttp.onreadystatechange = (e) => {
-        return xhttp.status === 201;
-    }
+async function logTaskEnd(user) {
+    const response = await fetch(
+        "/tasks/end/" + user,
+        {
+            method: "POST",
+            body: "",
+        },
+    )
+    return response.status === 201;
 }
 
 
@@ -173,16 +175,14 @@ function logTaskEnd(user) {
  * @return categories that username has registered
  * @throws Error if fails to get categories
  */
-function getCategories(user) {
-    const xhttp = new XMLHttpRequest();
-    xhttp.open("GET", url + "/categories/" + user, false);
-    xhttp.send()
-    xhttp.onreadystatechange = (e) => {
-        if (xhttp.status !== 200) {
-            throw Error("Failed to get categories");
-        }
-        return JSON.parse(xhttp.responseText);
+async function getCategories(user) {
+    const response = await fetch(
+        "/categories/" + user
+    );
+    if (response.status !== 200) {
+        throw Error("Failed to get user categories");
     }
+    return response.json();
 }
 
 
@@ -193,16 +193,19 @@ function getCategories(user) {
  * @param category new category to register
  * @return true if succeeded, false otherwise
  */
-function addCategory(user, category) {
-    const xhttp = new XMLHttpRequest();
+async function addCategory(user, category) {
     const params = {
         "category": category
     };
-    xhttp.open("POST", url + "/categories/" + user + formatParams(params), false);
-    xhttp.send();
-    xhttp.onreadystatechange = (e) => {
-        return xhttp.status === 201;
-    }
+    const response = await fetch(
+        "/categories/" + user + formatParams(params),
+        {
+            method: "POST",
+            body: "",
+        }
+    );
+    return response.status === 201;
+
 }
 
 /**
@@ -214,19 +217,16 @@ function addCategory(user, category) {
  * @return list of user tasks within the specified time range
  * @throws Error if cannot get list of user tasks
  */
-function getUserPlots(user, minTime, maxTime) {
-    const xhttp = new XMLHttpRequest();
+async function getUserPlots(user, minTime, maxTime) {
     const params = {
         "min_time": minTime,
         "max_time": maxTime,
     };
-    // TODO: include categories filter?
-    xhttp.open("GET", url + "/plots/" + user + formatParams(params), false);
-    xhttp.send()
-    xhttp.onreadystatechange = (e) => {
-        if (xhttp.status !== 200) {
-            throw Error("Failed to get user tasks");
-        }
-        return JSON.parse(xhttp.responseType);
+    const response = await fetch(
+        "/plots/" + user + formatParams(params)
+    );
+    if (response.status !== 200) {
+        throw Error("Failed to get user categories");
     }
+    return response.json();
 }
