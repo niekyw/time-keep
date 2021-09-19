@@ -3,3 +3,6 @@ jinja2
 aiofiles
 uvicorn
 pydantic
+bokeh
+sqlite3
+pandas
