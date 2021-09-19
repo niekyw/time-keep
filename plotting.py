@@ -23,7 +23,7 @@ def make_pie_chart(username: str,
                    min_time: Optional[datetime] = None,
                    max_time: Optional[datetime] = None,
                    categories: Optional[set[str]] = None,
-                   db = Depends(database_interactions.get_db)
+                   db=Depends(database_interactions.get_db)
                    ):
     task_list = task_routes.get_user_logs(username, min_time, max_time, categories, db=db)
     if not task_list:
