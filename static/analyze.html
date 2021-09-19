@@ -41,6 +41,10 @@
   <script>
   function updatePlot(){
     const item = getUserPlots("user1",null,null);
+    if (item === null) {
+      console.error("User has no data; cannot plot");
+      return;
+    }
     Bokeh.embed.embed_item(item);
   }
   </script>

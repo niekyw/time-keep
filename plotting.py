@@ -19,7 +19,7 @@ import task_routes
 router = APIRouter(prefix="/plots")
 
 
-@router.get("/{username}", response_model=Optional[tuple[str, str]])
+@router.get("/{username}", response_model=Optional[str])
 def make_pie_chart(username: str,
                    min_time: Optional[datetime] = None,
                    max_time: Optional[datetime] = None,
