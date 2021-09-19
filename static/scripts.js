@@ -21,20 +21,35 @@ var sec = 0;
 var stoptime = true;
 
 function clockIn() {
-
+  try {
+    logTaskStart('user', 'task', 'category') //TODO: fix default values
+  }catch error {
+    alert("Alert could not log starting task, breaking")
+  }
   if (stoptime === true) {
         stoptime = false;
         timerCycle();
     }
-}
 
+
+}
+//Does this exist?
 function stopTimer() {
+
   if (stoptime === false) {
     stoptime = true;
   }
+
+
+
 }
 
 function resetTimer() {
+  try {
+    logTaskEnd('user', 'task', 'category') //TODO: fix default values
+  }catch error {
+    alert("Alert could not log starting task, breaking")
+  }
     stoptime = true;
     timer.innerHTML = '00:00:00';
     hr = 0;
