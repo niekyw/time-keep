@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analyze Time Sheets</title>
+  <link rel="stylesheet" type="text/css" href="../static/style.css" />
+</head>
+<body>
+
+<div id="mySidenav" class="sidenav">
+  <a href="index.html" id="index">Index</a>
+  <a href="entry.html" id="enter">Enter</a>
+  <a href="view.html" id="view">View</a>
+  <a href="analyze.html" id="analyze">Analyze</a>
+</div>
+
+<div style="margin-left:80px;">
+  <input type="date" id="datepick3" name="d3" placeholder="Date(MM/DD/YYYY)" />
+  to
+  <input type="date" id="datepick4" name="d4" placeholder="Date(MM/DD/YYYY)" />
+
+  <form>
+    <div class="multiselect">
+      <div class="selectBox" onclick="showCheckboxes()">
+        <select>
+          <option>Select Categories</option>
+        </select>
+        <div class="overSelect"></div>
+      </div>
+      <div id="checkboxes">
+        <label for="one">
+          <input type="checkbox" id="one" />Cat 1</label>
+        <label for="two">
+          <input type="checkbox" id="two" />Cat 2</label>
+      </div>
+    </div>
+  </form>
+
+  <input type="button" class="button" value="Create graphs.">
+
+
+</div>
+</body>
+<script type="text/javascript" src="../static/scripts.js"></script>
+</html>

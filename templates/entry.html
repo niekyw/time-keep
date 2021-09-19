@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enter Time Entry</title>
+  <link rel="stylesheet" type="text/css" href="../static/style.css" />
+</head>
+<body>
+
+<div id="mySidenav" class="sidenav">
+  <a href="index.html" id="index">Index</a>
+  <a href="entry.html" id="enter">Enter</a>
+  <a href="view.html" id="view">View</a>
+  <a href="analyze.html" id="analyze">Analyze</a>
+</div>
+
+<div style="margin-left:80px;">
+  <div id="stopwatch">
+      00:00:00
+  </div>
+
+  <ul id="buttons">
+      <li><button id="clock" onclick="clockIn()">Clock In</button></li>
+      <li><button onclick="resetTimer()">Clock Out</button>
+        <div class="form-popup" id="myForm">
+          <form action="/action_page.php" class="form-container">
+            <h1>Login</h1>
+
+            <label for="user"><b>Username</b></label>
+            <input type="text" placeholder="Use an existing name or make a new one!" name="user" required>
+
+            <label for="task_name"><b>Task Name</b></label>
+            <input type="text" placeholder="Ex: studying for chemistry..." name="task_name" required>
+
+            <label for="cat"><b>Category</b></label>
+            <input type="cat" placeholder="Study" name="cat">
+
+            <button type="submit" class="btn">Confirm</button>
+            <button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
+          </form>
+      </div>
+      </li>
+
+  </ul>
+
+</div>
+</body>
+<script src="../static/scripts.js"></script>
+</html>
