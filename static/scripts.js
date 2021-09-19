@@ -109,6 +109,11 @@ async function getUserTasks(user, minTime, maxTime) {
         "min_time": minTime,
         "max_time": maxTime,
     };
+    for (const [key, optTime] of Object.entries(params)) {
+        if (optTime === null) {
+            delete params[key]
+        }
+    }
     // TODO: include categories filter?
     const response = await fetch(
         "/tasks/" + user + formatParams(params)
@@ -216,6 +221,11 @@ async function getUserPlots(user, minTime, maxTime) {
         "min_time": minTime,
         "max_time": maxTime,
     };
+    for (const [key, optTime] of Object.entries(params)) {
+        if (optTime === null) {
+            delete params[key]
+        }
+    }
     const response = await fetch(
         "/plots/" + user + formatParams(params)
     );

@@ -36,14 +36,14 @@
     </div>
   </form>
 
-  <input type="button" class="button" onclick="getUserPlots('user1', null, null)" value="Create graphs.">
+  <input type="button" class="button" onclick="updatePlot()" value="Create graphs.">
 
-<!--<script>-->
-<!--function updatePlot(){-->
-<!--  const item = getUserPlots("user1",null,null)-->
-<!--  Bokeh.embed.embed_item(item)-->
-<!--}-->
-</script>
+  <script>
+  function updatePlot(){
+    const item = getUserPlots("user1",null,null);
+    Bokeh.embed.embed_item(item);
+  }
+  </script>
 
   <div class="bk-root" id="070db4f2-c298-46b7-9f3f-411ef0d6974c" data-root-id="1734"></div>
 
