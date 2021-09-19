@@ -6,7 +6,7 @@ from math import pi
 
 import pandas as pd
 
-from bokeh.palettes import Accent
+from bokeh.palettes import Accent, Accent8
 from bokeh.plotting import figure
 from bokeh.transform import cumsum
 from bokeh.embed import components, json_item
@@ -26,7 +26,7 @@ def make_pie_chart(username: str,
                    categories: Optional[set[str]] = None,
                    db=Depends(database_interactions.get_db)
                    ):
-    task_list = task_routes.get_user_logs(username, min_time, max_time, categories, db=db)
+    task_list = task_routes.get_user_logs(username, min_time, max_time, categories, db)
     if not task_list:
         return None
     x = {task.name: task.length for task in task_list}
@@ -37,7 +37,10 @@ def make_pie_chart(username: str,
 
     data = pd.Series(x).reset_index(name='value').rename(columns={'index': 'task'})
     data['angle'] = data['value'] / data['value'].sum() * 2 * pi
-    data['color'] = Accent[len(x)]
+    if len(x) in Accent:
+        data['color'] = Accent[len(x)]  # TODO: errors for len(x) = 1 case
+    else:
+        data['color'] = Accent8[:len(x)]
 
     p = figure(height=350, title=title_string, toolbar_location=None,
                tools="hover", tooltips="@task: @value", x_range=(-0.5, 1.0))
