@@ -204,3 +204,29 @@ function addCategory(user, category) {
         return xhttp.status === 201;
     }
 }
+
+/**
+ * Return a JSON object representing a plot of the user's tasks fitting the given constraints.
+ *
+ * @param user username; str
+ * @param minTime minimum time; iso date string | null
+ * @param maxTime maximum time; iso date string | null
+ * @return list of user tasks within the specified time range
+ * @throws Error if cannot get list of user tasks
+ */
+function getUserPlots(user, minTime, maxTime) {
+    const xhttp = new XMLHttpRequest();
+    const params = {
+        "min_time": minTime,
+        "max_time": maxTime,
+    };
+    // TODO: include categories filter?
+    xhttp.open("GET", url + "/plots/" + user + formatParams(params), false);
+    xhttp.send()
+    xhttp.onreadystatechange = (e) => {
+        if (xhttp.status !== 200) {
+            throw Error("Failed to get user tasks");
+        }
+        return JSON.parse(xhttp.responseType);
+    }
+}
