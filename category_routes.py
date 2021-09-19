@@ -1,6 +1,6 @@
 from sqlite3 import Connection
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, status
 
 from database_interactions import get_db
 from utils import sanitize_categories
@@ -16,14 +16,11 @@ def get_user_categories(username: str, db=Depends(get_db)) -> list[str]:
     db: Connection
     categories = db.cursor().execute("""SELECT Category FROM categories WHERE User = ?""",
                                      (username, )).fetchall()
-    return categories
-
-
-# TODO: do we want to support renaming a category?
+    return [category for category, *_ in categories]
 
 
 # HTTP 409 is a conflict
-@router.post("/{username}", response_model=bool)
+@router.post("/{username}", response_model=bool, status_code=status.HTTP_201_CREATED)
 def add_category(username: str, category: str, db=Depends(get_db)) -> bool:
     """
     Add a new task category ``category`` for the user ``username``.
@@ -39,4 +36,6 @@ def add_category(username: str, category: str, db=Depends(get_db)) -> bool:
     if not exists:
         db.cursor().execute("""INSERT INTO categories (User, Category) VALUES (?, ?)""",
                             (username, category))
+        db.commit()
+
     return not exists

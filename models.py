@@ -12,10 +12,12 @@ class LogEntry(BaseModel):
 
     @classmethod
     def from_row(cls, row) -> "LogEntry":
+        start = datetime.fromisoformat(row["Start_Time"])
+        end = datetime.fromisoformat(row["End_Time"])
         return LogEntry(
-            start_time=row["start_time"],
-            end_time=row["end_time"],
-            length=row["end_time"] - row["start_time"],
-            name=row["name"],
-            category=row["category"],
+            start_time=start,
+            end_time=end,
+            length=end - start,
+            name=row["Task_Name"],
+            category=row["Category"],
         )

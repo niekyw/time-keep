@@ -3,13 +3,12 @@ from datetime import datetime
 from sqlite3 import Connection
 from typing import Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from database_interactions import get_db
 from category_routes import get_user_categories
 from models import LogEntry
 from utils import UTC, sanitize_categories
-
 
 router = APIRouter(prefix="/tasks")
 
@@ -30,7 +29,7 @@ def get_user_logs(username: str,
     db: Connection
     categories = {sanitize_categories(cat) for cat in categories} \
         if categories is not None else set(get_user_categories(username, db))
-    query = """SELECT User, Category, Start_Time, End_Time FROM tasks WHERE User = ?"""
+    query = """SELECT Task_Name, Category, Start_Time, End_Time FROM tasks WHERE User = ?"""
     args = [username]
     if min_time is not None:
         min_constraint = "AND Start_Time >= ?"
@@ -42,7 +41,7 @@ def get_user_logs(username: str,
         args.append(max_time)
     db.row_factory = sqlite3.Row
     logs = [LogEntry.from_row(row) for row in db.execute(query, args)
-            if row["category"] not in categories]
+            if row["category"] not in categories and row["End_Time"] is not None]
     return logs
 
 
@@ -59,13 +58,15 @@ def start_logging(username: str, task_name: str, category: str = "Miscellaneous"
     # Check that no event is currently running. If one is, can't start another task.
     currently_running = db.cursor().execute(
         """SELECT Task_Name FROM tasks WHERE User = ? AND End_Time IS NULL""",
-        (username, )).fetchone() is not None
+        (username,)).fetchone() is not None
     if not currently_running:
-        a = db.cursor().execute(
-            """INSERT INTO tasks (Task_Name, User, Category, Start_Time, End_Time) VALUES (?, ?, ?, ?, ?);""",
-             (task_name, username, category, start_time, None))
-        print("Successfully inserted!", a)
-    return not currently_running
+        db.cursor().execute(
+            """INSERT INTO tasks (Task_Name, User, Category, Start_Time, End_Time) VALUES (
+            ?, ?, ?, ?, ?);""",
+            (task_name, username, category, start_time, None))
+        db.commit()
+        return True
+    raise HTTPException(status_code=409, detail=f"{username} is already doing a task")
 
 
 @router.post("/end/{username}", response_model=bool, status_code=status.HTTP_201_CREATED)
@@ -76,13 +77,17 @@ def end_logging(username: str, db=Depends(get_db)) -> bool:
     db: Connection
     # Find the most recently starting event's unique identifying info
     most_recently_started = db.cursor().execute(
-        """SELECT User, Task_Name, Start_Time FROM tasks WHERE User = ? AND End_Time IS NULL""",
-        (username, )).fetchone()
+        """SELECT User, Task_Name, Start_Time FROM tasks WHERE User = ? AND End_Time IS 
+        NULL""",
+        (username,)).fetchone()
     if most_recently_started is None:
-        return False
+        raise HTTPException(status_code=409, detail=f"No started task for {username}")
     _, task_name, start_time = most_recently_started
     utc = UTC()
     end_time = datetime.now().astimezone(utc)
-    db.cursor().execute("""UPDATE tasks SET End_Time = ? WHERE User = ? AND Task_Name = ? AND Start_Time = ?""",
-                        (end_time, username, task_name, start_time))
+    db.cursor().execute(
+        """UPDATE tasks SET End_Time = ? WHERE User = ? AND Task_Name = ? AND Start_Time = 
+        ?""",
+        (end_time, username, task_name, start_time))
+    db.commit()
     return True
