@@ -9,7 +9,7 @@ import pandas as pd
 from bokeh.palettes import Accent
 from bokeh.plotting import figure
 from bokeh.transform import cumsum
-from bokeh.embed import json_item
+from bokeh.embed import components
 import json
 
 import database_interactions
@@ -49,5 +49,6 @@ def make_pie_chart(username: str,
     p.axis.axis_label = None
     p.axis.visible = False
     p.grid.grid_line_color = None
-
-    return json.dumps(json_item(p))
+    script, div = components(p)
+    print(div)
+    return
