@@ -19,14 +19,8 @@ let min = 0;
 let sec = 0;
 let stoptime = true;
 
-function clockIn() {
-  try {
-    logTaskStart('user', 'task', 'category') //TODO: fix default values
-  }catch (error) {
-    console.error("Could not log starting task, breaking");
-    return;
-  }
-  if (!logTaskStart("user", "task", "category")) {
+async function clockIn() {
+  if (!await logTaskStart("user", "task", "category")) {
 
   }
   if (stoptime === true) {
@@ -226,7 +220,7 @@ async function getUserPlots(user, minTime, maxTime) {
         "/plots/" + user + formatParams(params)
     );
     if (response.status !== 200) {
-        throw Error("Failed to get user categories");
+        throw Error("Failed to get plots for user");
     }
     return response.json();
 }
