@@ -22,14 +22,14 @@ var stoptime = true;
 
 function clockIn() {
 
-  if (stoptime == true) {
+  if (stoptime === true) {
         stoptime = false;
         timerCycle();
     }
 }
 
 function stopTimer() {
-  if (stoptime == false) {
+  if (stoptime === false) {
     stoptime = true;
   }
 }
@@ -183,7 +183,7 @@ function addCategory(user, category) {
     const params = {
         "category": category
     };
-    xhttp.open("POST", url + "/categories/" + user, false);
+    xhttp.open("POST", url + "/categories/" + user + formatParams(params), false);
     xhttp.send();
     xhttp.onreadystatechange = (e) => {
         return xhttp.status === 201;
