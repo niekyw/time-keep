@@ -9,6 +9,8 @@ from fastapi import Depends, FastAPI, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from database_interactions import get_db
+
 app = FastAPI()
 
 
@@ -42,8 +44,6 @@ class LogEntry(BaseModel):
 
 
 NOT_FOUND_RESPONSE = {404: {"msg": str}}
-
-get_db = None  # TODO
 
 
 def sanitize_categories(category: str) -> str:
@@ -140,7 +140,7 @@ def start_logging(username: str, task_name: str, category: str = "Miscellaneous"
     # Check that no event is currently running. If one is, can't start another task.
     currently_running = db.cursor().execute(
         """SELECT task_name FROM tasks WHERE username = ? AND end_time IS NULL""",
-        (username, )).fetchone() is None
+        (username, )).fetchone() is not None
     if not currently_running:
         db.cursor().execute(
             """INSERT INTO tasks VALUES (?, ?, ?, ?, ?)""",
